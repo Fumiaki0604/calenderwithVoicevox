@@ -1,0 +1,45 @@
+📋 PC移行用ファイルコピーリスト
+
+=== 🔴 必須ファイル（絶対にコピーが必要） ===
+✅ main.py                    # メインのカレンダー投稿スクリプト
+✅ slack_voice_monitor.py     # Slack監視・音声再生スクリプト  
+✅ requirements.txt           # Python依存関係
+✅ .env                      # 環境変数（認証情報）※最重要！
+✅ setup.py                  # PC環境自動セットアップ
+
+=== 🟡 実行用スクリプト（OS別に選択） ===
+Windows用:
+✅ run_calendar.bat          # カレンダー投稿実行
+✅ run_monitor.bat           # 監視モード実行
+
+macOS/Linux用:
+✅ run_calendar.sh           # カレンダー投稿実行  
+✅ run_monitor.sh            # 監視モード実行
+
+=== 🟢 推奨ファイル ===
+✅ README.md                 # プロジェクト説明
+✅ setup_pc.md               # PC環境詳細セットアップガイド
+✅ PC_MIGRATION_GUIDE.md     # この移行ガイド
+
+=== 🔵 テスト用ファイル（オプション） ===
+✅ test_slack_setup.py       # Slack接続テスト
+✅ check_permissions.py      # 権限確認
+✅ test_voice_only.py        # 音声合成テスト
+✅ final_test_nosound.py     # 完全フローテスト
+
+=== ❌ コピー不要ファイル ===
+❌ venv/                     # 仮想環境（PC側で新規作成）
+❌ get-pip.py               # pipインストール用（不要）
+❌ *.pyc                    # Pythonキャッシュファイル
+❌ __pycache__/             # Pythonキャッシュディレクトリ
+❌ simple_requirements.txt   # requirements.txtがあれば不要
+❌ test_*.py                # 上記推奨テストファイル以外
+
+=== 📝 コピー手順 ===
+1. PC上に新しいフォルダ作成: calendar-voice-bot
+2. 上記「必須ファイル」を1つずつコピー
+3. OS別実行スクリプトをコピー
+4. 推奨ファイルをコピー（詳細ガイド用）
+5. PC上で: python setup.py を実行
+
+⚠️ 最重要: .env ファイルの認証情報が正しくコピーできていることを確認！

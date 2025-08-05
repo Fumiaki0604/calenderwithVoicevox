@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Environment variables (contains secrets)
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+get-pip.py
+simple_requirements.txt
+
+# Test files (keep only essential ones)
+test_calendar.py
+test_calendar_nosound.py
+test_main_nosound.py
+test_monitor_nosound.py
+test_unified_dm.py
+debug_messages.py
+find_dm_channel.py
+list_channels.py
+final_test.py
+
+# Archive files
+*.tar.gz
+*.zip

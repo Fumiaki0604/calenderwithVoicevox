@@ -1,0 +1,6 @@
+# GitHub プッシュ用コマンド
+# [YOUR_USERNAME] を実際のGitHubユーザー名に置き換えて実行
+
+git remote add origin https://github.com/[YOUR_USERNAME]/calendar-voice-bot.git
+git branch -M main
+git push -u origin main
