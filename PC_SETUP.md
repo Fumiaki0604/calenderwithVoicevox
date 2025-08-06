@@ -13,52 +13,25 @@ python setup.py
 
 ## 3. .envファイルの作成
 
-WSL環境で動作確認済みの設定をPC環境に適用するため、以下のPythonコードを実行して.envファイルを生成してください：
+**最も簡単な方法：**
+
+1. `create_pc_env.py` ファイルをテキストエディターで開く
+2. 【】で囲まれた部分を実際の認証情報に置き換える
+3. ターミナルで以下のコマンドを実行：
+
+```bash
+python create_pc_env.py
+```
+
+これで.envファイルが自動生成されます！
+
+**手動で作成する場合（上級者向け）：**
+必要に応じて、以下のPythonコードをターミナルのPythonインタープリターまたは.pyファイルとして実行することも可能です：
 
 ```python
 import json
-
-# 実際の認証情報（使用する実際の値に置き換えてください）
-credentials = {
-    "type": "service_account",
-    "project_id": "YOUR_GOOGLE_PROJECT_ID",
-    "private_key_id": "YOUR_PRIVATE_KEY_ID",
-    "private_key": "YOUR_COMPLETE_PRIVATE_KEY_WITH_NEWLINES",
-    "client_email": "YOUR_SERVICE_ACCOUNT_EMAIL",
-    "client_id": "YOUR_CLIENT_ID",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "YOUR_CLIENT_X509_CERT_URL",
-    "universe_domain": "googleapis.com"
-}
-
-# JSON形式に変換（適切にエスケープされる）
-credentials_json = json.dumps(credentials, separators=(',', ':'))
-
-# .envファイルの内容を作成
-env_content = f'''# Slack Configuration
-SLACK_WEBHOOK_URL=YOUR_SLACK_WEBHOOK_URL
-
-# Google Calendar Configuration (Service Account)
-GOOGLE_CREDENTIALS_JSON={credentials_json}
-CALENDAR_ID=YOUR_CALENDAR_ID
-
-# Timezone (optional, defaults to Asia/Tokyo)
-TIMEZONE=Asia/Tokyo
-
-# VOICEVOX API Configuration
-VOICEVOX_API_KEY=YOUR_VOICEVOX_API_KEY
-VOICEVOX_SPEAKER_ID=3
-
-# Slack Bot Token (for monitoring messages)
-SLACK_BOT_TOKEN=YOUR_SLACK_BOT_TOKEN
-SLACK_CHANNEL_ID=YOUR_SLACK_CHANNEL_ID'''
-
-# .envファイルを保存
-with open('.env', 'w', encoding='utf-8') as f:
-    f.write(env_content)
-print("✅ .env file created!")
+credentials = {"type": "service_account", "project_id": "YOUR_PROJECT_ID", ...}
+# 以下省略
 ```
 
 ## 4. アプリケーションの実行
