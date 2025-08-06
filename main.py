@@ -42,7 +42,7 @@ class CalendarVoiceBot:
         # VOICEVOX API settings
         self.voicevox_api_key = os.getenv('VOICEVOX_API_KEY')
         self.voicevox_speaker_id = int(os.getenv('VOICEVOX_SPEAKER_ID', '3'))  # Default: ずんだもん
-        self.voicevox_api_url = 'https://api.su-shiki.com/v2/voicevox/audio/'
+        self.voicevox_api_url = 'https://api.tts.quest/v3/voicevox/synthesis'
         
         if not all([self.slack_webhook_url, self.google_credentials_json, self.calendar_id]):
             raise ValueError("Missing required environment variables: SLACK_WEBHOOK_URL, GOOGLE_CREDENTIALS_JSON, CALENDAR_ID")
@@ -256,28 +256,52 @@ class CalendarVoiceBot:
             if self.voicevox_api_key:
                 params['key'] = self.voicevox_api_key
             
-            headers = {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-            
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.voicevox_api_url, data=params, headers=headers) as response:
+                # Use GET request with query parameters like the browser implementation
+                async with session.get(self.voicevox_api_url, params=params) as response:
                     if response.status != 200:
                         logger.error(f"VOICEVOX API error: {response.status}")
                         error_text = await response.text()
                         logger.error(f"Error response: {error_text}")
                         return None
                     
-                    # su-shiki.com API returns audio data directly
-                    audio_data = await response.read()
+                    result = await response.json()
+                    logger.info(f"VOICEVOX API response keys: {list(result.keys())}")
                     
-                    # Save to temporary file
-                    temp_file = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
-                    temp_file.write(audio_data)
-                    temp_file.close()
+                    # Check for retry (rate limiting)
+                    if 'retryAfter' in result:
+                        retry_seconds = result['retryAfter'] + 1
+                        logger.info(f"Rate limited, retrying after {retry_seconds} seconds")
+                        await asyncio.sleep(retry_seconds)
+                        return await self.synthesize_speech(text)  # Recursive retry
                     
-                    logger.info(f"Audio file saved: {temp_file.name}")
-                    return temp_file.name
+                    # Get the streaming URL (correct field name)
+                    mp3_url = result.get('mp3StreamingUrl')
+                    
+                    if not mp3_url:
+                        if 'errorMessage' in result:
+                            logger.error(f"VOICEVOX API error: {result['errorMessage']}")
+                        else:
+                            logger.error("No mp3StreamingUrl in response")
+                            logger.error(f"Full response: {result}")
+                        return None
+                    
+                    logger.info(f"Downloading audio from: {mp3_url}")
+                    
+                    # Download audio file
+                    async with session.get(mp3_url) as audio_response:
+                        if audio_response.status != 200:
+                            logger.error(f"Failed to download audio: {audio_response.status}")
+                            return None
+                        
+                        # Save to temporary file
+                        temp_file = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
+                        audio_data = await audio_response.read()
+                        temp_file.write(audio_data)
+                        temp_file.close()
+                        
+                        logger.info(f"Audio file saved: {temp_file.name}")
+                        return temp_file.name
                         
         except Exception as e:
             logger.error(f"Error synthesizing speech: {e}")
